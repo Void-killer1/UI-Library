@@ -17,7 +17,7 @@ local DeccalLibrary = {}
 local Theme = {
     Background = Color3.fromRGB(11, 11, 11),
     Panel = Color3.fromRGB(26, 26, 26),
-    Accent = Color3.fromRGB(255, 65, 65), -- İsteğe bağlı değişebilir
+    Accent = Color3.fromRGB(255, 65, 65),
     Text = Color3.fromRGB(255, 255, 255),
     TextDark = Color3.fromRGB(150, 150, 150),
     Outline = Color3.fromRGB(40, 40, 40),
@@ -29,7 +29,6 @@ ScreenGui.Name = "Deccal_AvantGarde_UI_" .. tostring(math.random(1000, 9999))
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Güvenlik: CoreGui destekleniyorsa oraya, yoksa PlayerGui'ye at.
 local success, err = pcall(function()
     ScreenGui.Parent = CoreGui
 end)
@@ -39,7 +38,6 @@ end
 
 getgenv().DeccalUI_Instance = ScreenGui
 
--- Yardımcı Fonksiyonlar (Animasyon ve Sürükleme)
 local function CreateTween(instance, properties, duration)
     local tweenInfo = TweenInfo.new(duration or 0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     local tween = TweenService:Create(instance, tweenInfo, properties)
@@ -90,7 +88,8 @@ function DeccalLibrary:CreateWindow(titleText)
     MobileButton.BackgroundTransparency = 0.5
     MobileButton.Position = UDim2.new(0.5, -25, 0, 20)
     MobileButton.Size = UDim2.new(0, 50, 0, 50)
-    MobileButton.Image = "rbxassetid://89883430109659"
+    -- GUI için decal fix (rbxthumb kullanımı)
+    MobileButton.Image = "rbxthumb://type=Asset&id=89883430109659&w=150&h=150"
     MobileButton.Visible = false
     MobileButton.ClipsDescendants = true
     
@@ -146,7 +145,8 @@ function DeccalLibrary:CreateWindow(titleText)
     Logo.BackgroundTransparency = 1
     Logo.Position = UDim2.new(0, 10, 0, 5)
     Logo.Size = UDim2.new(0, 30, 0, 30)
-    Logo.Image = "rbxassetid://89883430109659"
+    -- GUI için decal fix (rbxthumb kullanımı)
+    Logo.Image = "rbxthumb://type=Asset&id=89883430109659&w=150&h=150"
 
     -- Başlık
     local Title = Instance.new("TextLabel")
@@ -284,7 +284,6 @@ function DeccalLibrary:CreateWindow(titleText)
             TabContent.CanvasSize = UDim2.new(0, 0, 0, ContentLayout.AbsoluteContentSize.Y + 20)
         end)
 
-        -- Elements Modülleri
         function Tab:CreateButton(text, callback)
             local ButtonFrame = Instance.new("Frame")
             ButtonFrame.Parent = TabContent
@@ -312,7 +311,6 @@ function DeccalLibrary:CreateWindow(titleText)
             Btn.MouseLeave:Connect(function() CreateTween(BtnStroke, {Color = Theme.Outline}, 0.2) end)
             
             Btn.MouseButton1Click:Connect(function()
-                -- Ripple Effect (Micro-interaction)
                 local ripple = Instance.new("Frame")
                 ripple.Parent = ButtonFrame
                 ripple.BackgroundColor3 = Theme.Accent
@@ -483,30 +481,5 @@ function DeccalLibrary:CreateWindow(titleText)
     return Window
 end
 
--- ÖRNEK KULLANIM (Kütüphane iskeleti hazır, özellikler entegre edildi)
-local MainWindow = DeccalLibrary:CreateWindow("Deccal Avant-Garde")
-local MainTab = MainWindow:CreateTab("Genel Ayarlar")
-local VisualTab = MainWindow:CreateTab("Görsel (Visuals)")
-local ExploitsTab = MainWindow:CreateTab("Gelişmiş")
-
-MainTab:CreateToggle("Aimbot Aktif", false, function(state)
-    print("Aimbot: " .. tostring(state))
-end)
-
-MainTab:CreateSlider("Görüş Alanı (FOV)", 0, 120, 90, function(val)
-    print("FOV Değeri: " .. tostring(val))
-end)
-
-MainTab:CreateButton("Konsolu Temizle", function()
-    print("Konsol temizlendi.")
-end)
-
-VisualTab:CreateToggle("ESP Aktif", true, function(state)
-    print("ESP durumu: " .. tostring(state))
-end)
-
-ExploitsTab:CreateButton("Panik Butonu (Sil)", function()
-    if getgenv().DeccalUI_Instance then
-        getgenv().DeccalUI_Instance:Destroy()
-    end
-end)
+-- BURASI ÇOK ÖNEMLİ: Kütüphanenin dışarıya aktarılması için nil hatasını çözen satır.
+return DeccalLibrary
